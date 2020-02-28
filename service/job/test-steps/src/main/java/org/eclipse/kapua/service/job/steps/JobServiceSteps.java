@@ -83,10 +83,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.List;
 import java.util.Map;
-import java.util.HashSet;
 
 // ****************************************************************************************
 // * Implementation of Gherkin steps used in JobService.feature scenarios.                *
@@ -124,6 +122,8 @@ public class JobServiceSteps extends TestBase {
     //Job Engine Service objects
     private JobEngineService jobEngineService;
     private JobEngineFactory jobEngineFactory;
+    private static final int SECONDS_TO_WAIT = 100;
+    private static final int SECONDS_TO_TRY = 2;
 
     // Default constructor
     @Inject
@@ -496,6 +496,8 @@ public class JobServiceSteps extends TestBase {
             stepData.remove("Job");
             Job job = jobService.query(tmpQuery).getFirstItem();
             stepData.put("Job", job);
+
+            assertEquals(name, job.getName());
         } catch (KapuaException ex) {
             verifyException(ex);
         }
@@ -1162,10 +1164,11 @@ public class JobServiceSteps extends TestBase {
     }
 
     @When("^I confirm the step index is (\\d+) and status is \"(.+)\"$")
-    public void checkStepIndexAndStatus( int stepIndex, String status) {
+    public void checkStepIndexAndStatus(int stepIndex, String status) throws KapuaException {
         JobTarget jobTarget = (JobTarget) stepData.get("JobTarget");
-        assertEquals(jobTarget.getStepIndex(), stepIndex);
-        assertEquals(jobTarget.getStatus().toString(), status);
+        JobTarget target = jobTargetService.find(jobTarget.getScopeId(), jobTarget.getId());
+        assertEquals(stepIndex, target.getStepIndex());
+        assertEquals(status, target.getStatus().toString());
     }
 
     @When("^I delete the last job target in the database$")
@@ -1457,8 +1460,8 @@ public class JobServiceSteps extends TestBase {
         }
     }
 
-    @When("^I query for the execution items for the current job$")
-    public void queryExecutionsForJob()
+    @Then("^I query for the execution items for the current job$")
+    public void queryExecutionsForJobWithPackages()
             throws Exception {
 
         Job job = (Job) stepData.get("Job");
@@ -1473,6 +1476,30 @@ public class JobServiceSteps extends TestBase {
             Long itemCount = (long) resultList.getSize();
             stepData.put("JobExecutionList", resultList);
             stepData.put("Count", itemCount);
+
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @Then("^I query for the execution items for the current job and I count (\\d+)$")
+    public void queryExecutionsForJob(Long num)
+            throws Exception {
+
+        Job job = (Job) stepData.get("Job");
+        JobExecutionQuery tmpQuery = jobExecutionFactory.newQuery(getCurrentScopeId());
+        tmpQuery.setPredicate(tmpQuery.attributePredicate(JobExecutionAttributes.JOB_ID, job.getId(), Operator.EQUAL));
+
+        primeException();
+        try {
+            stepData.remove("JobExecutionList");
+            stepData.remove("Count");
+            JobExecutionListResult resultList = jobExecutionService.query(tmpQuery);
+            Long itemCount = (long) resultList.getSize();
+            stepData.put("JobExecutionList", resultList);
+            stepData.put("Count", itemCount);
+
+            assertEquals(num, itemCount);
         } catch (KapuaException ex) {
             verifyException(ex);
         }
@@ -1551,12 +1578,12 @@ public class JobServiceSteps extends TestBase {
         }
     }
 
-    @And("^I add targets to job$")
+    @And("^I add target(?:|s) to job$")
     public void addTargetsToJob() throws Exception {
         JobTargetCreator jobTargetCreator = jobTargetFactory.newCreator(getCurrentScopeId());
         Job job = (Job) stepData.get("Job");
         ArrayList<Device> devices = (ArrayList<Device>) stepData.get("DeviceList");
-        Set<JobTarget> jobTargetList = new HashSet<>();
+        ArrayList<JobTarget> jobTargetList = new ArrayList<>();
 
         try {
             primeException();
@@ -1570,6 +1597,128 @@ public class JobServiceSteps extends TestBase {
                 jobTargetList.add(jobTarget);
             }
             stepData.put("JobTargetList", jobTargetList);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @And("^I search for the job targets in database$")
+    public void iSearchForTheJobTargetsInDatabase() {
+        ArrayList<JobTarget> jobTargets = (ArrayList<JobTarget>) stepData.get("JobTargetList");
+        stepData.remove("Count");
+        Long jobTargetSize = (long) jobTargets.size();
+        stepData.put("Count", jobTargetSize);
+    }
+
+    @And("^I search for step definition(?:|s) with the name$")
+    public void searchForStepDefinitionWithTheName(List<String> list) throws Exception {
+        ArrayList<JobStepDefinition> jobStepDefinitions = new ArrayList<>();
+        primeException();
+        try {
+            stepData.remove("JobStepDefinitions");
+            stepData.remove("JobStepDefinition");
+            stepData.remove("CurrentJobStepDefinitionId");
+            for (String name : list) {
+                JobStepDefinitionQuery query = jobStepDefinitionFactory.newQuery(null);
+                query.setPredicate(query.attributePredicate(JobStepDefinitionAttributes.NAME, name));
+                JobStepDefinition stepDefinition = jobStepDefinitionService.query(query).getFirstItem();
+                jobStepDefinitions.add(stepDefinition);
+                stepData.put("JobStepDefinitions", jobStepDefinitions);
+                stepData.put("JobStepDefinition", stepDefinition);
+                stepData.put("CurrentJobStepDefinitionId", stepDefinition.getId());
+            }
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @And("^I create a regular step creator with the name \"([^\"]*)\" and properties$")
+    public void aRegularStepCreatorWithTheNameAndProperties(String name, List<CucJobStepProperty> tmpProperty) {
+        JobStepCreator stepCreator;
+        ArrayList<JobStepDefinition> jobStepDefinitions = (ArrayList<JobStepDefinition>) stepData.get("JobStepDefinitions");
+        ArrayList<JobStepCreator> stepCreators = new ArrayList<>();
+
+        ArrayList<String> bundleIds = new ArrayList<>();
+        String firstValue = tmpProperty.get(0).getValue();
+        String[] values = firstValue.split(",");
+        for (String value : values) {
+            bundleIds.add(value);
+        }
+
+        for (String bundleId : bundleIds) {
+            for (JobStepDefinition stepDefinition : jobStepDefinitions) {
+                stepCreator = prepareDefaultJobStepCreator();
+                stepCreator.setName(name + stepCreators.size());
+                stepCreator.setJobStepDefinitionId(stepDefinition.getId());
+                List<JobStepProperty> tmpPropLst = new ArrayList<>();
+                for (CucJobStepProperty prop : tmpProperty) {
+
+                    if ((stepDefinition.getName().equals("Bundle Start") && prop.getName().equals("bundleId"))) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), bundleId));
+                    } else if (stepDefinition.getName().equals("Bundle Stop") && prop.getName().equals("bundleId")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), bundleId));
+                    } else if (stepDefinition.getName().equals("Command Execution") && prop.getName().equals("commandInput")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), prop.getValue()));
+                    } else if (stepDefinition.getName().equals("Configuration Put") && prop.getName().equals("configuration")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), prop.getValue()));
+                    } else if (stepDefinition.getName().equals("Asset Write") && prop.getName().equals("assets")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), prop.getValue()));
+                    } else if (stepDefinition.getName().equals("Package Download / Install") && prop.getName().equals("packageDownloadRequest")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), prop.getValue()));
+                    } else if (stepDefinition.getName().equals("Package Uninstall") && prop.getName().equals("packageUninstallRequest")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), prop.getValue()));
+                    } else if (prop.getName().equals("timeout")) {
+                        tmpPropLst.add(jobStepFactory.newStepProperty(prop.getName(), prop.getType(), prop.getValue()));
+                    }
+                }
+
+                stepCreator.setJobStepProperties(tmpPropLst);
+                stepCreators.add(stepCreator);
+
+                stepData.put("JobStepCreator", stepCreator);
+                stepData.put("JobStepCreators", stepCreators);
+            }
+        }
+    }
+
+    @And("^I create a new step entities from the existing creator$")
+    public void iCreateANewStepEntitiesFromTheExistingCreator() throws Exception {
+        KapuaId currentJobId = (KapuaId) stepData.get("CurrentJobId");
+        ArrayList<JobStepCreator> jobStepCreators = (ArrayList<JobStepCreator>) stepData.get("JobStepCreators");
+        ArrayList<JobStep> jobSteps = new ArrayList<>();
+
+        for (JobStepCreator jobStepCreator : jobStepCreators) {
+            jobStepCreator.setJobId(currentJobId);
+            primeException();
+            try {
+                stepData.remove("JobStep");
+                stepData.put("JobSteps", jobSteps);
+                stepData.remove("CurrentStepId");
+                JobStep step = jobStepService.create(jobStepCreator);
+                jobSteps.add(step);
+                stepData.put("JobStep", step);
+                stepData.put("JobSteps", jobSteps);
+                stepData.put("CurrentStepId", step.getId());
+            } catch (KapuaException ex) {
+                verifyException(ex);
+            }
+        }
+    }
+
+    @And("^I confirm the step index is different than (\\d+) and status is \"([^\"]*)\"$")
+    public void iConfirmTheStepIndexIsDifferentThanAndStatusIs(int stepIndex, String status) {
+        JobTarget jobTarget = (JobTarget) stepData.get("JobTarget");
+        assertNotEquals(stepIndex, jobTarget.getStepIndex());
+        assertEquals(status, jobTarget.getStatus().toString());
+    }
+
+    @And("^I stop the job$")
+    public void iStopTheJob() throws Exception {
+        Job job = (Job) stepData.get("Job");
+
+        try {
+            primeException();
+            jobEngineService.stopJob(getCurrentScopeId(), job.getId());
         } catch (KapuaException ex) {
             verifyException(ex);
         }
@@ -1658,11 +1807,11 @@ public class JobServiceSteps extends TestBase {
 
     @Then("^I find a job with name \"([^\"]*)\"$")
     public void iFindAJobWithName(String jobName) {
-    Job job = (Job) stepData.get("Job");
-    assertEquals(job.getName(), jobName);
+        Job job = (Job) stepData.get("Job");
+        assertEquals(job.getName(), jobName);
     }
 
-    @Then("^I delete the job with name \"([^\"]*)\"$")
+    @Then("^I try to delete the job with name \"([^\"]*)\"$")
     public void iDeleteTheJobWithName(String jobName) throws Exception {
         Job job = (Job) stepData.get("Job");
 
@@ -1678,15 +1827,237 @@ public class JobServiceSteps extends TestBase {
 
     @Then("^I try to edit job to name \"([^\"]*)\"$")
     public void iTryToEditJobToName(String jobName) throws Throwable {
-       Job job = (Job) stepData.get("Job");
-       job.setName(jobName);
+        Job job = (Job) stepData.get("Job");
+        job.setName(jobName);
 
+        try {
+            primeException();
+            Job newJob = jobService.update(job);
+            stepData.put("Job", newJob);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @And("^I query for the execution items for the current job and I count (\\d+) or more$")
+    public void iQueryForTheExecutionItemsForTheCurrentJobAndICountOrMore(int numberOfExecutions) throws Exception {
+        Job job = (Job) stepData.get("Job");
+        JobExecutionQuery tmpQuery = jobExecutionFactory.newQuery(getCurrentScopeId());
+        tmpQuery.setPredicate(tmpQuery.attributePredicate(JobExecutionAttributes.JOB_ID, job.getId(), Operator.EQUAL));
+
+        primeException();
+        try {
+            stepData.remove("JobExecutionList");
+            stepData.remove("Count");
+            JobExecutionListResult resultList = jobExecutionService.query(tmpQuery);
+            Long executionsCount = (long) resultList.getSize();
+            stepData.put("JobExecutionList", resultList);
+            stepData.put("Count", executionsCount);
+
+            assertTrue(executionsCount >= numberOfExecutions);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @When("^I query for the job with the name \"([^\"]*)\" and I find it$")
+    public void iQueryForTheJobWithTheNameAndIFoundIt(String jobName) throws Exception {
+        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, jobName));
+
+        primeException();
+        try {
+            stepData.remove("Job");
+            Job job = jobService.query(tmpQuery).getFirstItem();
+            stepData.put("Job", job);
+
+            assertEquals(jobName, job.getName());
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @And("^I create a new job target item$")
+    public void iCreateANewJobTargetItem() throws Exception {
+        JobTargetCreator targetCreator = prepareJobTargetCreator();
+        stepData.put("JobTargetCreator", targetCreator);
+
+        primeException();
+        try {
+            stepData.remove("JobTarget");
+            JobTarget target = jobTargetService.create(targetCreator);
+            stepData.put("JobTarget", target);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @When("^I count the targets in the current scope and I count (\\d+)$")
+    public void iCountTheTargetsInTheCurrentScopeAndICount(Long targetNum) throws Exception {
+        JobTargetQuery tmpQuery = jobTargetFactory.newQuery(getCurrentScopeId());
+
+        primeException();
+        try {
+            stepData.remove("Count");
+            Long targetCount = jobTargetService.count(tmpQuery);
+            stepData.put("Count", targetCount);
+            assertEquals(targetNum, targetCount);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @And("^I confirm job target has step index (\\d+) and status \"([^\"]*)\"$")
+    public void iConfirmJobTargetHasStatus(int stepIndex, String jobStatus) throws Exception {
+
+        try {
+            startOrRestartJob(100, 2, stepIndex, jobStatus);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void startOrRestartJob(int secondsToWait, int secondsToTry, int stepIndex, String jobTargetStatus) throws InterruptedException, KapuaException {
+        JobTarget jobTarget = (JobTarget) stepData.get("JobTarget");
+        long endWaitTime = System.currentTimeMillis() + secondsToWait * 1000;
+        while (System.currentTimeMillis() < endWaitTime) {
+            JobTarget targetFound = jobTargetService.find(jobTarget.getScopeId(), jobTarget.getId());
+            if (targetFound.getStepIndex() == stepIndex && targetFound.getStatus().toString().equals(jobTargetStatus)) {
+                assertEquals(jobTargetStatus, targetFound.getStatus().toString());
+                assertEquals(stepIndex, targetFound.getStepIndex());
+                break;
+            } else {
+                Thread.sleep(secondsToTry * 1000);
+            }
+        }
+    }
+
+    @Given("^I prepare a job with name \"([^\"]*)\" and description \"([^\"]*)\"$")
+    public void iPrepareAJobWithNameAndDescription(String name, String description) {
+        JobCreator jobCreator = jobFactory.newCreator(SYS_SCOPE_ID);
+        jobCreator.setName(name);
+        jobCreator.setDescription(description);
+
+        stepData.put("JobCreator", jobCreator);
+    }
+
+    @When("^I try to create job with permitted symbols \"([^\"]*)\" in name$")
+    public void iTryToCreateJobWithPermittedSymbolsInName(String validCharacters) throws Throwable {
+        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        for (int i = 0; i < validCharacters.length(); i++){
+            String jobName = "jobName" + validCharacters.charAt(i);
+            jobCreator.setName(jobName);
+            try {
+                primeException();
+                Job job = jobService.create(jobCreator);
+                stepData.put("Job", job);
+                stepData.put("CurrentJobId", job.getId());
+            } catch (KapuaException ex){
+                verifyException(ex);
+            }
+        }
+    }
+
+    @When("^I try to create job with invalid symbols \"([^\"]*)\" in name$")
+    public void iTryToCreateJobWithInvalidSymbolsInName(String invalidCharacters) throws Throwable {
+       JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        for (int i = 0; i < invalidCharacters.length(); i++) {
+            String jobName = "jobName" + invalidCharacters.charAt(i);
+            jobCreator.setName(jobName);
+            try {
+                primeException();
+                Job job = jobService.create(jobCreator);
+                stepData.put("Job", job);
+                stepData.put("CurrentJobId", job.getId());
+            } catch (KapuaException ex) {
+                verifyException(ex);
+            }
+        }
+    }
+
+    @Then("^I find a job with description \"([^\"]*)\"$")
+    public void iFindAJobWithDescription(String jobDescription) throws Throwable {
+        Job job = (Job) stepData.get("Job");
+        assertEquals(job.getDescription(), jobDescription);
+    }
+
+    @Then("^I try to update job name with permitted symbols \"([^\"]*)\" in name$")
+    public void iTryToUpdateJobNameWithPermittedSymbolsInName(String validCharacters) throws Throwable {
+        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        for (int i = 0; i < validCharacters.length(); i++){
+            String jobName = "jobName" + validCharacters.charAt(i);
+            jobCreator.setName("jobName" + i);
+
+            try {
+                primeException();
+                stepData.remove("Job");
+                Job job = jobService.create(jobCreator);
+                job.setName(jobName);
+                jobService.update(job);
+                stepData.put("CurrentJobId", job.getId());
+                stepData.put("Job", job);
+            } catch (KapuaException ex){
+                verifyException(ex);
+            }
+        }
+    }
+
+    @When("^I try to update job name with invalid symbols \"([^\"]*)\" in name$")
+    public void iTryToUpdateJobNameWithInvalidSymbolsInName(String invalidCharacters) throws Throwable {
+        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        for (int i = 0; i < invalidCharacters.length(); i++){
+            String jobName = "jobName" + invalidCharacters.charAt(i);
+            jobCreator.setName("jobName" + i);
+
+            try {
+                primeException();
+                stepData.remove("Job");
+                Job job = jobService.create(jobCreator);
+                job.setName(jobName);
+                jobService.update(job);
+                stepData.put("CurrentJobId", job.getId());
+                stepData.put("Job", job);
+            } catch (KapuaException ex){
+                verifyException(ex);
+            }
+        }
+    }
+
+    @Then("^I change name of job from \"([^\"]*)\" to \"([^\"]*)\"$")
+    public void iChangeNameOfJobFromTo(String oldName, String newName) throws Throwable {
        try {
-           primeException();
-           Job newJob = jobService.update(job);
-           stepData.put("Job", newJob);
-       } catch (KapuaException ex) {
-           verifyException(ex);
+           JobQuery query = jobFactory.newQuery(getCurrentScopeId());
+           query.setPredicate(query.attributePredicate(JobAttributes.NAME, oldName, Operator.EQUAL));
+           JobListResult queryResult = jobService.query(query);
+           Job job = queryResult.getFirstItem();
+           job.setName(newName);
+           jobService.update(job);
+           stepData.put("Job", job);
+       } catch (Exception e){
+           verifyException(e);
        }
     }
+
+    @And("^There is no job with name \"([^\"]*)\" in database$")
+    public void thereIsNoJobWithNameInDatabase(String jobName) throws Throwable {
+        Job job = (Job) stepData.get("Job");
+        assertNotEquals(job.getName(), jobName);
+    }
+
+    @When("^I change the job description from \"([^\"]*)\" to \"([^\"]*)\"$")
+    public void iChangeTheJobDescriptionFromTo(String oldDescription, String newDescription) throws Throwable {
+        try {
+            JobQuery query = jobFactory.newQuery(getCurrentScopeId());
+            query.setPredicate(query.attributePredicate(JobAttributes.DESCRIPTION, oldDescription, Operator.EQUAL));
+            JobListResult queryResult = jobService.query(query);
+            Job job = queryResult.getFirstItem();
+            job.setDescription(newDescription);
+            jobService.update(job);
+            stepData.put("Job", job);
+        } catch (Exception e){
+            verifyException(e);
+        }
+    }
 }
+
+

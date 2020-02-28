@@ -135,6 +135,11 @@ public class BasicSteps extends TestBase {
         assertEquals(num, stepData.get("Count"));
     }
 
+    @Then("^I count (\\d+) or more$")
+    public void checkAsyncCountResult(Long num) {
+        assertTrue((Long) stepData.get("Count") >= num);
+    }
+
     @Then("^I get the integer (\\d+)$")
     public void checkIntResult(int num) {
         assertEquals(num, (int) stepData.get("IntValue"));
@@ -200,5 +205,10 @@ public class BasicSteps extends TestBase {
     public void noAssertionErrorWasThrown() {
         boolean assertErrorCaught = stepData.contains("AssertErrorCaught") ? (boolean) stepData.get("AssertErrorCaught") : false;
         assertFalse("An unexpected assert error was raised!", assertErrorCaught);
+    }
+
+    @And("^I wait for (\\d+) millisecond(?:|s) for processes to settle down$")
+    public void waitingMilliseconds(int milliseconds) throws InterruptedException {
+        Thread.sleep(milliseconds);
     }
 }

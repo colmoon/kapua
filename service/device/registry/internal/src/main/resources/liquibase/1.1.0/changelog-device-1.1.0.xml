@@ -19,5 +19,6 @@
 
     <include relativeToChangelogFile="true" file="./device-add-model-name.xml"/>
     <include relativeToChangelogFile="true" file="./device-remove-modem-constraint.xml"/>
+    <include relativeToChangelogFile="true" file="./device_event-modify_gps_column.xml"/>
 
 </databaseChangeLog>

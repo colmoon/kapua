@@ -20,6 +20,7 @@ import cucumber.api.CucumberOptions;
 @RunWith(CucumberWithProperties.class)
 @CucumberOptions(
         features = "classpath:features/user/UserPermissionI9n.feature",
+
         glue = {"org.eclipse.kapua.qa.common",
                 "org.eclipse.kapua.service.account.steps",
                 "org.eclipse.kapua.service.user.steps",
@@ -27,7 +28,9 @@ import cucumber.api.CucumberOptions;
                 "org.eclipse.kapua.service.device.registry.steps",
                 "org.eclipse.kapua.service.tag.steps",
                 "org.eclipse.kapua.service.job.steps",
-                "org.eclipse.kapua.service.datastore.steps"
+                "org.eclipse.kapua.service.datastore.steps",
+                "org.eclipse.kapua.service.scheduler.steps",
+                "org.eclipse.kapua.service.endpoint.steps"
         },
         plugin = {"pretty",
                 "html:target/cucumber/UserServiceI9n",
@@ -35,7 +38,6 @@ import cucumber.api.CucumberOptions;
         },
         strict = true,
         monochrome = true)
-@CucumberProperty(key="broker.ip", value="192.168.33.10")
 @CucumberProperty(key="kapua.config.url", value="")
 @CucumberProperty(key="datastore.client.class", value="org.eclipse.kapua.service.datastore.client.rest.RestDatastoreClient")
 @CucumberProperty(key="org.eclipse.kapua.qa.datastore.extraStartupDelay", value="5")

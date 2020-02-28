@@ -142,7 +142,7 @@ public class TagServiceSteps extends TestBase {
         }
     }
 
-    @Given("^Tag with name \"([^\"]*)\"$")
+    @Given("^I create a tag with name \"([^\"]*)\"$")
     public void tagWithName(String tagName) throws Throwable {
 
         TagCreator tagCreator = tagCreatorCreator(tagName);
@@ -153,16 +153,21 @@ public class TagServiceSteps extends TestBase {
 
     @When("^Tag with name \"([^\"]*)\" is searched$")
     public void tagWithNameIfSearched(String tagName) throws Throwable {
+        try {
+            primeException();
+            TagQuery query = tagFactory.newQuery(SYS_SCOPE_ID);
+            query.setPredicate(query.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
+            TagListResult queryResult = tagService.query(query);
+            Tag foundTag = queryResult.getFirstItem();
+            stepData.put("tag", foundTag);
+            stepData.put("queryResult", queryResult);
+        } catch (KapuaException ke) {
+            verifyException(ke);
+        }
 
-        TagQuery query = tagFactory.newQuery(SYS_SCOPE_ID);
-        query.setPredicate(query.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
-        TagListResult queryResult = tagService.query(query);
-        Tag foundTag = queryResult.getFirstItem();
-        stepData.put("tag", foundTag);
-        stepData.put("queryResult", queryResult);
     }
 
-    @Then("^Tag with name \"([^\"]*)\" is found$")
+    @Then("^I find a tag with name \"([^\"]*)\"$")
     public void tagWithNameIsFound(String tagName) {
 
         Tag foundTag = (Tag) stepData.get("tag");
@@ -175,7 +180,7 @@ public class TagServiceSteps extends TestBase {
         assertNull(stepData.get("tag"));
     }
 
-    @Then("^Tag with name \"([^\"]*)\" is found and deleted$")
+    @Then("^I find and delete tag with name \"([^\"]*)\"$")
     public void tagWithNameIsDeleted(String tagName) throws Throwable {
 
         Tag foundTag = (Tag) stepData.get("tag");
@@ -200,7 +205,7 @@ public class TagServiceSteps extends TestBase {
         return tagCreator;
     }
 
-    @And("^Tag name is changed into name \"([^\"]*)\"$")
+    @And("^I try to edit tag to name \"([^\"]*)\"$")
     public void tagNameIsChangedIntoName(String tagName) throws Exception {
        Tag tag = (Tag) stepData.get("tag");
        tag.setName(tagName);
@@ -215,9 +220,10 @@ public class TagServiceSteps extends TestBase {
        }
     }
 
-    @And("^Tag is deleted$")
-    public void tagIsDeleted() throws Exception {
+    @And("^I delete the tag with name \"([^\"]*)\"$")
+    public void tagIsDeleted(String tagName) throws Exception {
         Tag tag = (Tag) stepData.get("tag");
+        assertEquals(tagName, tag.getName());
 
         try {
             tagService.delete(getCurrentScopeId(), tag.getId());

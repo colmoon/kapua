@@ -34,12 +34,14 @@ import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.role.Role;
+import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 
 @ScenarioScoped
@@ -101,14 +103,18 @@ public class UserRoleServiceSteps extends TestBase {
         }
     }
 
-    @And("^I add access role to user$")
-    public void addRoleToUser() throws Exception {
+    @And("^I add access role \"([^\"]*)\" to user \"([^\"]*)\"$")
+    public void addRoleToUser(String roleName, String userName) throws Exception {
         AccessInfo accessInfo = (AccessInfo) stepData.get("AccessInfo");
         Role role = (Role) stepData.get("Role");
+        User user = (User) stepData.get("User");
         AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(getCurrentScopeId());
             accessRoleCreator.setAccessInfoId(accessInfo.getId());
             accessRoleCreator.setRoleId(role.getId());
             stepData.put("AccessRoleCreator", accessRoleCreator);
+
+            assertEquals(roleName, role.getName());
+            assertEquals(userName, user.getName());
 
             try {
                 primeException();
@@ -130,5 +136,32 @@ public class UserRoleServiceSteps extends TestBase {
         } catch (KapuaException ex) {
             verifyException(ex);
         }
+    }
+
+    @And("^I add access role \"([^\"]*)\" to created users$")
+    public void iAddAccessRoleToUsers(String roleName) throws Exception {
+
+        ArrayList<AccessInfo> accessInfoList = (ArrayList<AccessInfo>) stepData.get("AccessInfoList");
+        ArrayList<AccessRole> accessRoleList = new ArrayList<>();
+        Role role = (Role) stepData.get("Role");
+        AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(getCurrentScopeId());
+        accessRoleCreator.setRoleId(role.getId());
+        stepData.put("AccessRoleCreator", accessRoleCreator);
+        assertEquals(roleName, role.getName());
+
+        for (AccessInfo accessInfo : accessInfoList) {
+            accessRoleCreator.setAccessInfoId(accessInfo.getId());
+            try {
+                primeException();
+                stepData.remove("AccessRole");
+                AccessRole accessRole = accessRoleService.create(accessRoleCreator);
+                stepData.put("AccessRole", accessRole);
+                stepData.put("AccessRoleId", accessRole.getId());
+                accessRoleList.add(accessRole);
+            } catch (KapuaException ex) {
+                verifyException(ex);
+            }
+        }
+        stepData.put("AccessRoleList", accessRoleList);
     }
 }

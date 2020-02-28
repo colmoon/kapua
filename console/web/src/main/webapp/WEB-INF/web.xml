@@ -58,6 +58,7 @@
         <url-pattern>/exporter_usage/*</url-pattern>
         <url-pattern>/exporter_device/*</url-pattern>
         <url-pattern>/exporter_device_event/*</url-pattern>
+        <url-pattern>/exporter_job_target/*</url-pattern>
         <url-pattern>/settings/*</url-pattern>
         <url-pattern>/role/*</url-pattern>
         <url-pattern>/accessrole/*</url-pattern>
@@ -73,9 +74,9 @@
         <url-pattern>/jobStepDefinition/*</url-pattern>
         <url-pattern>/jobTarget/*</url-pattern>
         <url-pattern>/jobEngine/*</url-pattern>
+        <url-pattern>/jobExecution/*</url-pattern>
         <url-pattern>/trigger/*</url-pattern>
         <url-pattern>/triggerDefinition/*</url-pattern>
-        <url-pattern>/execution/*</url-pattern>
         <url-pattern>/console/*</url-pattern>
         <url-pattern>/file/*</url-pattern>
         <url-pattern>/image/*</url-pattern>
@@ -372,6 +373,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>jobTargetExporterServlet</servlet-name>
+        <servlet-class>org.eclipse.kapua.app.console.module.job.servlet.JobTargetExporterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jobTargetExporterServlet</servlet-name>
+        <url-pattern>/exporter_job_target/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>jobEngineServlet</servlet-name>
         <servlet-class>org.eclipse.kapua.app.console.module.job.server.GwtJobEngineServiceImpl</servlet-class>
     </servlet>
@@ -399,12 +409,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>executionServlet</servlet-name>
+        <servlet-name>jobExecutionServlet</servlet-name>
         <servlet-class>org.eclipse.kapua.app.console.module.job.server.GwtJobExecutionServiceImpl</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>executionServlet</servlet-name>
-        <url-pattern>/execution</url-pattern>
+        <servlet-name>jobExecutionServlet</servlet-name>
+        <url-pattern>/jobExecution</url-pattern>
     </servlet-mapping>
 
     <servlet>

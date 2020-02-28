@@ -46,8 +46,8 @@
 
         <api>org.eclipse.kapua.service.certificate.CertificateService</api>
         <api>org.eclipse.kapua.service.certificate.CertificateFactory</api>
-        <api>org.eclipse.kapua.service.certificate.CertificateInfoService</api>
-        <api>org.eclipse.kapua.service.certificate.CertificateInfoFactory</api>
+        <api>org.eclipse.kapua.service.certificate.info.CertificateInfoService</api>
+        <api>org.eclipse.kapua.service.certificate.info.CertificateInfoFactory</api>
 
         <!-- datastore -->
         <api>org.eclipse.kapua.service.datastore.MessageStoreService</api>
@@ -103,6 +103,8 @@
         <api>org.eclipse.kapua.service.device.management.request.GenericRequestFactory</api>
         <api>org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationService</api>
         <api>org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory</api>
+        <api>org.eclipse.kapua.service.device.management.job.manager.JobDeviceManagementOperationManagerService</api>
+        <api>org.eclipse.kapua.service.device.management.job.scheduler.manager.JobDeviceManagementTriggerManagerService</api>
         <api>org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService</api>
         <api>org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory</api>
 

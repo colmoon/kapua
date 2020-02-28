@@ -13,21 +13,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.eclipse.kapua</groupId>
         <artifactId>kapua-rest-api</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
-    <artifactId>kapua-rest-api-web</artifactId>
 
+    <artifactId>kapua-rest-api-web</artifactId>
     <packaging>war</packaging>
 
-    <properties>
-        <swagger-ui.version>2.1.4</swagger-ui.version>
-    </properties>
-
     <dependencies>
-
         <!-- Internal dependencies -->
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
@@ -36,6 +32,16 @@
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-guice</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-rest-api-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-rest-api-resources</artifactId>
         </dependency>
 
         <!--  Service implementations dependencies-->
@@ -57,19 +63,60 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-message-internal</artifactId>
+            <artifactId>kapua-device-registry-internal</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-device-management-all-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-device-management-registry-internal</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-endpoint-internal</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-device-registry-internal</artifactId>
+            <artifactId>kapua-job-internal</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-job-engine-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-job-engine-jbatch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-scheduler-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-scheduler-quartz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-message-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-security-certificate-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-security-shiro</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-stream-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-tag-internal</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-translator-kapua-kura</artifactId>
@@ -90,46 +137,9 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-transport-mqtt</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-device-management-all-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-device-management-registry-internal</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-security-shiro</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-tag-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-security-certificate-internal</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-user-internal</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-rest-api-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-rest-api-resources</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-stream-internal</artifactId>
         </dependency>
 
         <!-- Jersey -->
@@ -139,25 +149,19 @@
             <version>${jersey.version}</version>
         </dependency>
 
-        <!-- Swagger for apidoc -->
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-
         <!-- Moxy for object marshalling unmarshalling -->
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-moxy</artifactId>
         </dependency>
 
-        <!-- Apache shiro security framework -->
         <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>provided</scope>
         </dependency>
 
+        <!-- Apache shiro security framework -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
@@ -215,64 +219,6 @@
     <build>
         <finalName>api</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-swagger-ui</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.eclipse.kapua.external</groupId>
-                                    <artifactId>swagger-ui</artifactId>
-                                    <version>${swagger-ui.version}-CQ-10792</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/tmp/swagger-ui</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.eclipse.kapua.external</groupId>
-                                    <artifactId>swagger-ui-lib</artifactId>
-                                    <version>${swagger-ui.version}</version>
-                                    <outputDirectory>${project.build.directory}/tmp/swagger-ui-lib</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>package swagger ui</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo>Swagger-ui: create doc dir</echo>
-                                <copy todir="${project.build.directory}/${project.build.finalName}/doc">
-                                    <fileset dir="${project.build.directory}/tmp/swagger-ui/"/>
-                                </copy>
-                                <echo>Swagger-ui-lib: create lib dir for swagger-ui</echo>
-                                <copy todir="${project.build.directory}/${project.build.finalName}/doc/lib">
-                                    <fileset dir="${project.build.directory}/tmp/swagger-ui-lib/"/>
-                                </copy>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-
-            </plugin>
-
             <!-- To help IntelliJ IDEA correctly recognize the source path when using Maven Auto Import -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

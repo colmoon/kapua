@@ -30,6 +30,11 @@ import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
 import org.eclipse.kapua.qa.common.utils.EmbeddedBroker;
+import org.eclipse.kapua.service.device.management.asset.internal.DeviceAssetsImpl;
+import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
+import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
+import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
+import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
@@ -129,6 +134,7 @@ public class BrokerSteps extends TestBase {
      * Service for connecting devices.
      */
     private static DeviceConnectionService deviceConnectionService;
+    private static DeviceAssetManagementService deviceAssetManagementService;
 
     /**
      * Client simulating Kura device
@@ -164,6 +170,7 @@ public class BrokerSteps extends TestBase {
         deviceCommandManagementService = locator.getService(DeviceCommandManagementService.class);
         deviceCommandFactory = locator.getFactory(DeviceCommandFactory.class);
         deviceConnectionService = locator.getService(DeviceConnectionService.class);
+        deviceAssetManagementService = locator.getService(DeviceAssetManagementService.class);
 
         JAXBContextProvider consoleProvider = new TestJAXBContextProvider();
         XmlUtil.setContextProvider(consoleProvider);
@@ -193,6 +200,21 @@ public class BrokerSteps extends TestBase {
 
         stepData.put("KuraDevices", kuraDevices);
     }
+
+    @When("^I restart the Kura Mock$")
+    public void restartKuraMock() throws Exception {
+        ArrayList<KuraDevice> kuraDevices = (ArrayList<KuraDevice>) stepData.get("KuraDevices");
+        List<KuraDevice> restartedKuraDevices = new ArrayList<>();
+        if (!kuraDevices.isEmpty()) {
+            for (KuraDevice kuraDevice : kuraDevices) {
+                kuraDevice.mqttClientSetup();
+                kuraDevice.mqttClientConnect();
+                restartedKuraDevices.add(kuraDevice);
+            }
+        }
+        stepData.put("KuraDevices", restartedKuraDevices);
+    }
+
 
     @When("I get the KuraMock device(?:|s)$")
     public void getKuraMockDevice() throws Exception {
@@ -229,10 +251,13 @@ public class BrokerSteps extends TestBase {
 
     }
 
-    @When("^Device is connected$")
+    @When("^^Device(?:|s) (?:is|are) connected$$")
     public void deviceConnected() throws Exception {
-
-        deviceBirthMessage();
+        try {
+            deviceBirthMessage();
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
     }
 
     @When("^Device death message is sent$")
@@ -350,8 +375,26 @@ public class BrokerSteps extends TestBase {
         return bundles.get(0);
     }
 
+    private DeviceAsset findAssetByName(final String assetSymbolicName) {
+        List<DeviceAsset> savedAssets = (List<DeviceAsset>) stepData.get("assets");
+
+        List<DeviceAsset> assets = savedAssets.stream()
+                .filter(asset -> asset.getName().equals(assetSymbolicName))
+                .collect(Collectors.toList());
+
+        if (assets.isEmpty()) {
+            Assert.fail(String.format("Asset %s/%s is not present", assetSymbolicName));
+        }
+        if (assets.size() > 1) {
+            Assert.fail(String.format("There is more than one entry for asset %s/%s", assetSymbolicName));
+        }
+
+        return assets.get(0);
+    }
+
     @When("^Configuration is requested$")
     public void requestConfiguration() throws Exception {
+        ArrayList<KuraDevice> kuraDevices = (ArrayList<KuraDevice>) stepData.get("KuraDevices");
 
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
@@ -362,11 +405,37 @@ public class BrokerSteps extends TestBase {
         }
     }
 
+    @When("A Configuration named (.*) has property (.*) with value (.*)$")
+    public void checkConfiguration(String configurationName, String configurationKey, String configurationValue) {
+        DeviceComponentConfiguration configuration = findConfigurationByNameAndValue(configurationName, configurationKey, configurationValue);
+        Assert.assertEquals(configurationName, configuration.getDefinition().getId());
+        Assert.assertTrue(configuration.getProperties().containsKey(configurationKey));
+        Assert.assertTrue(configuration.getProperties().get(configurationKey).toString().equals(configurationValue));
+    }
+
+    private DeviceComponentConfiguration findConfigurationByNameAndValue(final String configurationName, final String configurationKey, final String configurationValue) {
+        List<DeviceComponentConfiguration> savedConfigurations = (List<DeviceComponentConfiguration>) stepData.get("configurations");
+        List<DeviceComponentConfiguration> configurations = savedConfigurations.stream()
+                .filter(configuration -> configuration.getDefinition().getId().equals(configurationName))
+                .filter(configuration -> configuration.getProperties().containsKey(configurationKey)
+                        && configuration.getProperties().get(configurationKey).toString().equals(configurationValue))
+                .collect(Collectors.toList());
+
+        if (configurations.isEmpty()) {
+            Assert.fail(String.format("Configuration %s with value %s for property %s is not present", configurationName, configurationValue, configurationKey));
+        }
+        if (configurations.size() > 1) {
+            Assert.fail(String.format("There is more than one entry for configuration %s", configurationName));
+        }
+
+        return configurations.get(0);
+    }
+
     @Then("^Configuration is received$")
     public void configurationReceived() {
         @SuppressWarnings("unchecked")
         List<DeviceComponentConfiguration> configurations = (List<DeviceComponentConfiguration>) stepData.get("configurations");
-        assertEquals(11, configurations.size());
+        assertEquals(17, configurations.size());
     }
 
     @When("^Command (.*) is executed$")
@@ -508,12 +577,42 @@ public class BrokerSteps extends TestBase {
         stepData.put("KuraDevices", kuraDevices);
     }
 
-    @When("^Device(?:|s) \"([^\"]*)\" connected$")
-    public void deviceConnected(String arg0) throws Exception {
-        try {
-            deviceBirthMessage();
-        } catch (KapuaException ex) {
-            verifyException(ex);
+    @And("^Device assets are requested$")
+    public void deviceAssetsAreRequested() throws Exception{
+        ArrayList<KuraDevice> kuraDevices = (ArrayList<KuraDevice>) stepData.get("KuraDevices");
+        DeviceAssets deviceAssets = new DeviceAssetsImpl();
+
+        for (KuraDevice kuraDevice : kuraDevices) {
+            Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
+            Assert.assertNotNull(device);
+            DeviceAssets deviceAsset = deviceAssetManagementService.read(device.getScopeId(), device.getId(), deviceAssets ,null);
+            List<DeviceAsset> assets = deviceAsset.getAssets();
+            stepData.put("assets", assets);
+        }
+    }
+
+    @And("^Asset with name \"([^\"]*)\" and channel with name \"([^\"]*)\" and value (\\d+) are received$")
+    public void assetWithNameAndChannelWithNameAndValueAreReceived(String assetName, String channelName, int channelValue) throws Throwable {
+        DeviceAsset asset = findAssetByName(assetName);
+        Assert.assertEquals(assetName, asset.getName());
+        for (DeviceAssetChannel deviceAssetChannel : asset.getChannels()) {
+            assertEquals(channelName, deviceAssetChannel.getName());
+            assertEquals(channelValue, deviceAssetChannel.getValue());
+        }
+    }
+
+    @And("^Packages are requested and (\\d+) package(?:|s) (?:is|are) received$")
+    public void packagesAreRequestedAndPackageIsReceived(int numberOfPackages) throws Exception {
+        for(KuraDevice kuraDevice : kuraDevices) {
+            Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
+            if (device != null) {
+                DevicePackages deploymentPackages = devicePackageManagementService.getInstalled(device.getScopeId(),
+                        device.getId(), null);
+                List<DevicePackage> packages = deploymentPackages.getPackages();
+                stepData.put("packages", packages);
+
+                assertEquals(numberOfPackages, packages.size());
+            }
         }
     }
 }

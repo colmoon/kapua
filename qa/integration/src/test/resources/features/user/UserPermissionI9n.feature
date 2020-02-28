@@ -33,7 +33,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -56,7 +56,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -96,7 +96,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -133,7 +133,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -179,7 +179,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -192,7 +192,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-b | Kapua User b | kapua_b@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-b | ToManySecrets123# | true    |
     Then I logout
@@ -223,7 +223,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -247,7 +247,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-b | Kapua User b | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-b | ToManySecrets123# | true    |
     And I logout
@@ -273,7 +273,7 @@ Feature: User Permission tests
       And A generic user
         | name    | displayName  | email             | phoneNumber     | status  | userType |
         | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
-      And Credentials
+      And I add credentials
         | name    | password          | enabled |
         | kapua-a | ToManySecrets123# | true    |
       And Add permissions to the last created user
@@ -312,7 +312,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -342,7 +342,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -355,12 +355,12 @@ Feature: User Permission tests
     Given I create the group
       | scope | name         |
       | 1     | test_group_1 |
-    Then I search for the last created group
+    Then I search for the group with name "test_group_1"
     And The group was found
     Then I update the group name to "updated_test_group_1"
     Then The group was correctly updated
-    When I delete the last created group
-    Then I search for the last created group
+    When I delete the group with name "updated_test_group_1"
+    Then I search for the group with name "updated_test_group_1"
     And No group was found
     And I logout
 
@@ -374,7 +374,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -384,10 +384,10 @@ Feature: User Permission tests
       | tag     | delete |
     Then I logout
     When I login as user with name "kapua-a" and password "ToManySecrets123#"
-    Given Tag with name "tag_a"
+    Given I create a tag with name "tag_a"
     When Tag with name "tag_a" is searched
-    Then Tag with name "tag_a" is found
-    Then Tag with name "tag_a" is found and deleted
+    Then I find a tag with name "tag_a"
+    Then I find and delete tag with name "tag_a"
     And Tag with name "tag_a" is searched
     And No tag was found
     And I logout
@@ -402,7 +402,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -435,7 +435,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -446,7 +446,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-b | Kapua User b | kapua_b@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-b | ToManySecrets123# | true    |
     And I logout
@@ -482,7 +482,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -495,13 +495,12 @@ Feature: User Permission tests
     Given I create the following role
       | scopeId | name      |
       | 1       | test_role |
-    Then I search for the last created role
+    Then I search for the role with name "test_role"
     And The correct role entry was found
-    When I update the last created role name to "updated_test_role"
-    And I search for the last created role
-    Then The role was successfully updated
-    When I delete the last created role
-    And I search for the last created role
+    When I update the role name to "updated_test_role"
+    And I search for the role with name "updated_test_role"
+    When I delete the role with name "updated_test_role"
+    And I search for the role with name "updated_test_role"
     Then I find no roles
     And I logout
 
@@ -516,7 +515,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -574,7 +573,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -623,7 +622,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -639,7 +638,7 @@ Feature: User Permission tests
     When I login as user with name "kapua-a" and password "ToManySecrets123#"
     When I search for last created user's credentials
     Then I find 0 credentials
-    And Credentials
+    And I add credentials
       | name    | password           | enabled |
       | kapua-b | ToManySecrets123#2 | true    |
     Then I search for last created user's credentials
@@ -661,7 +660,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -714,7 +713,7 @@ Feature: User Permission tests
     And A generic user
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
-    And Credentials
+    And I add credentials
       | name    | password          | enabled |
       | kapua-a | ToManySecrets123# | true    |
     And Add permissions to the last created user
@@ -746,6 +745,727 @@ Feature: User Permission tests
     Then An exception was thrown
     When I search for a connection with the client ID "testClient2"
     Then No connection was found
+    And I logout
+
+  Scenario: Add Scheduler Permissions Without Job Permissions
+  Creating "user1", adding permissions with scheduler domain without adding job permissions.
+  "user1" should not have permissions to do anything as he is not authorized to do anything with jobs.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name    | password          | enabled |
+      | user1   | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain    | action |
+      | scheduler | write  |
+      | scheduler | read   |
+      | scheduler | delete |
+    And I logout
+    Then I login as user with name "user1" and password "ToManySecrets123#"
+    Given I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I find scheduler properties with name "Interval Job"
+    And A regular trigger creator with the name "TestSchedule" and following properties
+      | name     | type              | value |
+      | interval | java.lang.Integer | 1     |
+    Given I expect the exception "KapuaIllegalNullArgumentException" with the text "*"
+    When I try to create a new trigger entity from the existing creator
+    Then An exception was thrown
+    Given I expect the exception "NullPointerException" with the text "*"
+    When I try to edit trigger name "TestSchedule1"
+    Then An exception was thrown
+    Given I expect the exception "NullPointerException" with the text "*"
+    When I try to delete last created trigger
+    Then An exception was thrown
+    Then I logout
+
+  Scenario: Add Scheduler Permissions With Job Permissions
+  Creating "user1", adding permissions with scheduler domain with adding job permissions.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain | action |
+      | job    | write  |
+      | job    | read   |
+      | job    | delete |
+    And I logout
+    Then I login as user with name "user1" and password "ToManySecrets123#"
+    And I find scheduler properties with name "Interval Job"
+    And A regular trigger creator with the name "TestSchedule" and following properties
+      | name     | type              | value |
+      | interval | java.lang.Integer | 1     |
+    Given I expect the exception "SubjectUnauthorizedException" with the text "Missing permission: scheduler:write:1:*"
+    When I try to create a new trigger entity from the existing creator
+    Then An exception was thrown
+    Given I expect the exception "NullPointerException" with the text "*"
+    When I try to edit trigger name "TestSchedule1"
+    Then An exception was thrown
+    Given I expect the exception "NullPointerException" with the text "*"
+    When I try to delete last created trigger
+    Then An exception was thrown
+    Then I logout
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Add permissions to the last created user
+      | domain    | action |
+      | scheduler | write  |
+      | scheduler | read   |
+      | scheduler | delete |
+    And I logout
+    Then I login as user with name "user1" and password "ToManySecrets123#"
+    And I find scheduler properties with name "Interval Job"
+    And A regular trigger creator with the name "TestSchedule" and following properties
+      | name     | type              | value |
+      | interval | java.lang.Integer | 1     |
+    When I try to create a new trigger entity from the existing creator
+    And I try to edit trigger name "TestSchedule1"
+    And I try to delete last created trigger
+    Then No exception was thrown
+    And I logout
+
+  Scenario: Add Endpoint Permission To The User
+  Creating "user1", adding endpoint permissions to the user and test if user can work with endpoints.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Scope with ID 1
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And I create endpoint with schema "endpoint1", domain "com" and port 20000
+    And I logout
+    Then I login as user with name "user1" and password "ToManySecrets123#"
+    Given I expect the exception "SubjectUnauthorizedException" with the text "Missing permission: endpoint_info:read:"
+    When I try to find endpoint with schema "endpoint1"
+    Then An exception was thrown
+    Then I logout
+    And I login as user with name "kapua-sys" and password "kapua-password"
+    And Add permissions to the last created user
+      | domain        | action | targetScope |
+      | endpoint_info | write  | 1           |
+      | endpoint_info | read   | 1           |
+      | endpoint_info | delete | 1           |
+    Then I logout
+    And I login as user with name "user1" and password "ToManySecrets123#"
+    When I try to find endpoint with schema "endpoint1"
+    Then No exception was thrown
+    Given I expect the exception "SubjectUnauthorizedException" with the text "Missing permission: endpoint_info:write:*:*"
+    When I create endpoint with schema "end2", domain "com" and port 20000
+    Then An exception was thrown
+    When I expect the exception "SubjectUnauthorizedException" with the text "Missing permission: endpoint_info:delete:*:*"
+    And I delete endpoint with schema "endpoint1"
+    Then An exception was thrown
+    Then I logout
+    And I login as user with name "kapua-sys" and password "kapua-password"
+    When I delete endpoint with schema "endpoint1"
+    Then No exception was thrown
+    And I logout
+
+  Scenario: Adding Account:Read permission to user in same scope
+  Login as kapua-sys user on the kapua-sys account and add a new user0 user with
+  the Account:Read permission to the kapua-sys account. Create a child account subAccount0.
+  Login as user0 and perform actions on the subAccount0. Verify that only allowed actions
+  are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I search for the account with the remembered account Id
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "subAccount0"
+    Then An exception was thrown
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "subAccount0"
+    Then An exception was thrown
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "kapua-sys"
+    Then An exception was thrown
+    And I expect the exception "KapuaIllegalNullArgumentException" with the text "An illegal null value was provided"
+    When I delete account "kapua-sys"
+    Then An exception was thrown
+    And I logout
+
+    Scenario: Adding Account:Write permission to user in same scope
+    Login as kapua-sys user on the kapua-sys account and add a new user0 user with
+    the Account:Write permission to the kapua-sys account. Create a child account subAccount0.
+    Login as user0 and perform actions on the subAccount0. Verify that only allowed actions are
+    performed and the exception is thrown where needed.
+
+      Given I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
+      And A generic user
+        | name  | displayName  | email           | phoneNumber     | status  | userType |
+        | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+      And I add credentials
+        | name  | password          | enabled |
+        | user0 | ToManySecrets123# | true    |
+      And Add permissions to the last created user
+        | domain  | action |
+        | account | write  |
+      And Account
+        | name        | scopeId |
+        | subAccount0 | 1       |
+    And I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I search for the account with the remembered account Id
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "subAccount0"
+    And An exception was thrown
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "kapua-sys"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "kapua-sys"
+    And An exception was thrown
+    And I logout
+
+  Scenario: Adding Account:Delete permission to user in same scope
+  Login as kapua-sys user on the kapua-sys account and add a new user0 user with
+  the Account:Delete permission to the kapua-sys account. Create a child account subAccount0.
+  Login as user0 and perform actions on the subAccount0. Verify that only allowed actions are
+  performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | delete |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I search for the account with the remembered account Id
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "subAccount0"
+    And An exception was thrown
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "kapua-sys"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "kapua-sys"
+    And An exception was thrown
+    And I logout
+
+  Scenario: Adding Account:Read and Account:Write permissions to user in same scope
+  Login as kapua-sys user on the kapua-sys account and add a new user0 user with the Account:Read
+  and Account:Write permissions to the kapua-sys account. Create a child account subAccount0.
+  Login as user0 and perform actions on the subAccount0. Verify that only allowed actions are
+  performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+      | account | write  |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I search for the account with the remembered account Id
+    When I modify the account "subAccount0"
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "subAccount0"
+    Then An exception was thrown
+    When I modify the account "kapua-sys"
+    And I expect the exception "KapuaIllegalNullArgumentException" with the text "An illegal null value was provided"
+    When I delete account "kapua-sys"
+    Then An exception was thrown
+    And I logout
+
+  Scenario: Adding Account:Read and Account:Delete permissions to user in same scope
+  Login as kapua-sys user on the kapua-sys account and add a new user0 user with the Account:Read
+  and Account:Delete permissions to the kapua-sys account. Create a child account subAccount0.
+  Login as user0 and perform actions on the subAccount0. Verify that only allowed actions
+  are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+      | account | delete |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I search for the account with the remembered account Id
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "subAccount0"
+    Then An exception was thrown
+    When I delete account "subAccount0"
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "kapua-sys"
+    Then An exception was thrown
+    And I expect the exception "KapuaIllegalNullArgumentException" with the text "An illegal null value was provided"
+    When I delete account "kapua-sys"
+    Then An exception was thrown
+    And I logout
+
+  Scenario: Adding Account:Write and Account:Delete permission to user in same scope
+  Login as kapua-sys user on the kapua-sys account and add a new user0 user with the Account:Write
+  and Account:Delete permission to the kapua-sys account. Create a child account subAccount0.
+  Login as user0 and perform actions on the subAccount0. Verify that only allowed actions are
+  performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | write  |
+      | account | delete |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I search for the account with the remembered account Id
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "subAccount0"
+    And An exception was thrown
+    When I delete account "subAccount0"
+    And I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I modify the account "kapua-sys"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "kapua-sys"
+    And An exception was thrown
+    And I logout
+
+    Scenario: Adding all Account permissions to user in same scope
+    Login as kapua-sys user on the kapua-sys account and add a new user0 user with all account
+    domain permissions to the kapua-sys account. Create a child account subAccount0.
+    Login as user0 and perform actions on the subAccount0. Verify that only allowed actions are
+    performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+      | account | write  |
+      | account | delete |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Then I search for the account with the remembered account Id
+    And I modify the account "subAccount0"
+    And I delete account "subAccount0"
+    And I modify the account "kapua-sys"
+    Then I expect the exception "KapuaIllegalNullArgumentException" with the text "An illegal null value was provided"
+    When I delete account "kapua-sys"
+    And An exception was thrown
+    And I logout
+
+   Scenario: Adding Account:Read permission to user in sub-account scope
+   Login as kapua-sys user on the kapua-sys account and create a new subaccount0 account.
+   Create another subAccount1 and add a user1 user with the Account:Read permission to it.
+   Login as user1 and perform actions on the subAccount0, subAccount1 and the kapua-sys accounts.
+   Verify that only allowed actions are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I select account "kapua-sys"
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+     And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+    And I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    Then I search for the account with the remembered account Id
+    And Account "subAccount1" has 0 children
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "kapua-sys"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I delete account "kapua-sys"
+    And An exception was thrown
+    Then Account
+       | name         |
+       | subAccount01 |
+     And Account "subAccount1" has 1 children
+     And I logout
+
+  Scenario: Adding Account:Write permission to user in sub-account scope
+  Login as kapua-sys user on the kapua-sys account and create a new subaccount0 account.
+  Create another subAccount1 and add a user1 user with the Account:Write permission to it.
+  Login as user0 and perform actions on the subAccount0 and subAccount1 accounts.
+  Verify that only allowed actions are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I select account "kapua-sys"
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | write  |
+    And I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And Account "subAccount1" has 0 children
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount1"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount1"
+    And An exception was thrown
+    Then Account
+     | name         |
+     | subAccount01 |
+    And Account "subAccount1" has 1 children
+    And I set the expiration date to 2030-05-05
+    And I logout
+
+  Scenario: Adding Account:Delete permission to user in sub-account scope
+  Login as kapua-sys user on the kapua-sys account and create a new subaccount0 account.
+  Create another subAccount1 and add a user1 user with the Account:Delete permission to it.
+  Login as user1 and perform actions on the subAccount0 and subAccount1 accounts.
+  Verify that only allowed actions are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I select account "kapua-sys"
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | delete |
+    Then Account
+      | name         |
+      | subAccount10 |
+    And I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And Account "subAccount1" has 1 children
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount1"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount1"
+    And An exception was thrown
+    And I delete account "subAccount10"
+    And I logout
+
+  Scenario: Adding all Account permissions to user in sub-account scope
+  Login as kapua-sys user on the kapua-sys account and create a new subaccount1 account.
+  Create another subAccount01 and add a user1 user with all account domain permissions to it.
+  Login as user1 and perform actions on the subAccount1 and subAccount01 accounts.
+  Verify that only allowed actions are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And Account
+      | name         | scopeId |
+      | subAccount01 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+      | account | write  |
+      | account | delete |
+    And I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    And Account "subAccount01" has 0 children
+    And I modify the account "subAccount01"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount01"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount1"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount1"
+    And An exception was thrown
+    And I logout
+
+  Scenario: Modifying Sub-account of a different parent account
+  Login as kapua-sys user on the kapua-sys account and create a new subaccount0 account
+  and add user0 to it. Create another subAccount1 and a subAccount01, with user1 on it. User1 has only
+  the Account:Read permision. Login as user1 and perform actions on the user0 and subAccount0. Verify
+  that only allowed actions are performed and the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I select account "kapua-sys"
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And Account
+      | name         | scopeId |
+      | subAccount01 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+    And I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I search for user with name "user0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I modify the account "subAccount0"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I delete account "subAccount0"
+    And An exception was thrown
+    And I logout
+
+  Scenario: Querying Other Items With All Account Permissions
+  Login as kapua-sys user on the kapua-sys account and create a new account1 account and add user1 to it.
+  User1 should have all the permissions from the account domain. Create a new device, job, tag, group and role.
+  Login as user1 and perform actions on the added entities. Verify that only allowed actions are performed and
+  the exception is thrown where needed.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And I configure user service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And I configure the device registry service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities |  10   |
+    And I configure the tag service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And I configure the job service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And I configure the group service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure the role service
+      | type    | name                       | value |
+      | boolean | infiniteChildEntities      | true  |
+      | integer | maxNumberChildEntities     | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action |
+      | account | read   |
+      | account | write  |
+      | account | delete |
+    And A device named "test_device"
+    And I create a job with the name "test_job"
+    And I create a tag with name "test_tag"
+    And I create the group with name "test_group"
+    And I create the following role
+      | scopeId | name      |
+      | 1       | test_role |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I search for user with name "user1"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I query for devices with Client Id "test_device"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I find a job with name "test_job"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And Tag with name "test_tag" is searched
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I search for the group with name "test_group"
+    And An exception was thrown
+    Then I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    And I find a role with name "test_role"
+    And An exception was thrown
     And I logout
 
   Scenario: Stop broker after all scenarios

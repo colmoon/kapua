@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration;
 
-import org.eclipse.kapua.commons.configuration.metatype.XmlConfigPropertiesAdapter;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -89,7 +88,7 @@ public interface DeviceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "properties")
-    @XmlJavaTypeAdapter(XmlConfigPropertiesAdapter.class)
+    @XmlJavaTypeAdapter(DeviceXmlConfigPropertiesAdapter.class)
     Map<String, Object> getProperties();
 
     /**

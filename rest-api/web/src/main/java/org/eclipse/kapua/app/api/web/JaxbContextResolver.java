@@ -12,6 +12,7 @@
 package org.eclipse.kapua.app.api.web;
 
 import org.eclipse.kapua.app.api.core.exception.model.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.app.api.core.exception.model.ExceptionInfo;
 import org.eclipse.kapua.app.api.core.exception.model.IllegalArgumentExceptionInfo;
 import org.eclipse.kapua.app.api.core.exception.model.IllegalNullArgumentExceptionInfo;
 import org.eclipse.kapua.app.api.core.exception.model.SubjectUnauthorizedExceptionInfo;
@@ -90,6 +91,9 @@ import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.RolePermissionXmlRegistry;
 import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.eclipse.kapua.service.authorization.role.RoleXmlRegistry;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
+import org.eclipse.kapua.service.config.ServiceConfiguration;
+import org.eclipse.kapua.service.config.ServiceConfigurationXmlRegistry;
 import org.eclipse.kapua.service.datastore.client.model.InsertResponse;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
@@ -128,11 +132,11 @@ import org.eclipse.kapua.service.device.management.command.DeviceCommandXmlRegis
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationXmlRegistry;
-import org.eclipse.kapua.service.device.management.message.request.xml.RequestMessageXmlRegistry;
 import org.eclipse.kapua.service.device.management.message.notification.OperationStatus;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestPayload;
+import org.eclipse.kapua.service.device.management.message.request.xml.RequestMessageXmlRegistry;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseChannel;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseMessage;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackage;
@@ -184,6 +188,26 @@ import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoXmlRegistry;
 import org.eclipse.kapua.service.endpoint.EndpointUsage;
+import org.eclipse.kapua.service.job.Job;
+import org.eclipse.kapua.service.job.JobListResult;
+import org.eclipse.kapua.service.job.JobQuery;
+import org.eclipse.kapua.service.job.JobXmlRegistry;
+import org.eclipse.kapua.service.job.execution.JobExecution;
+import org.eclipse.kapua.service.job.execution.JobExecutionListResult;
+import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
+import org.eclipse.kapua.service.job.execution.JobExecutionXmlRegistry;
+import org.eclipse.kapua.service.job.step.JobStep;
+import org.eclipse.kapua.service.job.step.JobStepListResult;
+import org.eclipse.kapua.service.job.step.JobStepQuery;
+import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
+import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
+import org.eclipse.kapua.service.job.targets.JobTarget;
+import org.eclipse.kapua.service.job.targets.JobTargetListResult;
+import org.eclipse.kapua.service.job.targets.JobTargetQuery;
+import org.eclipse.kapua.service.scheduler.trigger.Trigger;
+import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
+import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
+import org.eclipse.kapua.service.scheduler.trigger.TriggerXmlRegistry;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
 import org.eclipse.kapua.service.tag.TagListResult;
@@ -230,6 +254,7 @@ public class JaxbContextResolver implements ContextResolver<JAXBContext> {
 
                     // REST API exception models
                     ThrowableInfo.class,
+                    ExceptionInfo.class,
 
                     SubjectUnauthorizedExceptionInfo.class,
 
@@ -485,8 +510,39 @@ public class JaxbContextResolver implements ContextResolver<JAXBContext> {
                     EventStoreRecordCreator.class,
                     EventStoreRecordListResult.class,
                     EventStoreRecordQuery.class,
-                    EventStoreXmlRegistry.class
+                    EventStoreXmlRegistry.class,
 
+                    // Service Config
+                    ServiceConfigurationXmlRegistry.class,
+                    ServiceConfiguration.class,
+                    ServiceComponentConfiguration.class,
+
+                    // Jobs
+                    Job.class,
+                    JobListResult.class,
+                    JobQuery.class,
+                    JobXmlRegistry.class,
+
+                    JobStep.class,
+                    JobStepListResult.class,
+                    JobStepQuery.class,
+                    JobStepXmlRegistry.class,
+                    JobStepProperty.class,
+
+                    JobExecution.class,
+                    JobExecutionListResult.class,
+                    JobExecutionQuery.class,
+                    JobExecutionXmlRegistry.class,
+
+                    JobTarget.class,
+                    JobTargetListResult.class,
+                    JobTargetQuery.class,
+                    JobExecutionXmlRegistry.class,
+
+                    Trigger.class,
+                    TriggerListResult.class,
+                    TriggerQuery.class,
+                    TriggerXmlRegistry.class
             }, properties);
         } catch (Exception e) {
             throw new RuntimeException(e);

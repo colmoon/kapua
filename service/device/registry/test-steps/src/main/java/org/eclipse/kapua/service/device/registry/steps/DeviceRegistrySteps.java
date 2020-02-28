@@ -780,14 +780,17 @@ public class DeviceRegistrySteps extends TestBase {
         }
     }
 
-    @When("^I delete the device with the client id \"(.+)\"$")
+    @When("^I delete the device with the clientId \"(.+)\"$")
     public void deleteDeviceWithClientId(String clientId)
             throws Exception {
 
-        primeException();
+        Device device = (Device) stepData.get("Device");
+
         try {
-            Device tmpDev = deviceRegistryService.findByClientId(getCurrentScopeId(), clientId);
-            deviceRegistryService.delete(getCurrentScopeId(), tmpDev.getId());
+            primeException();
+            if (device.getClientId().equals(clientId)) {
+                deviceRegistryService.delete(getCurrentScopeId(), device.getId());
+            }
         } catch (KapuaException ex) {
             verifyException(ex);
         }
@@ -1684,10 +1687,17 @@ public class DeviceRegistrySteps extends TestBase {
     }
 
     @Then("^I find (\\d+) device event(?:|s)?$")
-    public void checkEventListForNumberOfItems(int number) {
+    public void checkEventListForNumberOfItems(int numberOfEvents) {
 
         DeviceEventListResult eventList = (DeviceEventListResult) stepData.get("DeviceEventList");
-        assertEquals(number, eventList.getSize());
+        assertEquals(numberOfEvents, eventList.getSize());
+    }
+
+    @Then("^I find (\\d+) or more device event(?:|s)?$")
+    public void checkEventList(int number) {
+
+        DeviceEventListResult eventList = (DeviceEventListResult) stepData.get("DeviceEventList");
+        assertTrue(eventList.getSize() >= number);
     }
 
     @Then("^There is no such event$")
@@ -2553,10 +2563,43 @@ public class DeviceRegistrySteps extends TestBase {
       }
     }
 
-    @Then("^I find device with client id \"([^\"]*)\"$")
+    @Then("^I find device with clientId \"([^\"]*)\"$")
     public void iFindDeviceWithClientId(String deviceName) {
         Device device = (Device) stepData.get("Device");
 
         assertEquals(device.getClientId(), deviceName);
+    }
+
+    @When("^I search events from devices in account \"([^\"]*)\" and (\\d+) (?:event(?:|s)?|or more event(?:|s)?) (?:is|are) found$")
+    public void iSearchForEventsFromDevicesInAccount(String account, int eventsNum) throws Exception {
+        ArrayList<Device> devices = (ArrayList<Device>) stepData.get("DeviceList");
+        DeviceEventQuery tmpQuery;
+        Device tmpDev;
+        DeviceEventListResult tmpList;
+        Account tmpAcc;
+
+        try {
+            for (Device device : devices) {
+                tmpAcc = accountService.findByName(account);
+                Assert.assertNotNull(tmpAcc);
+                Assert.assertNotNull(tmpAcc.getId());
+
+                tmpDev = deviceRegistryService.findByClientId(tmpAcc.getId(), device.getClientId());
+                Assert.assertNotNull(tmpDev);
+                Assert.assertNotNull(tmpDev.getId());
+
+                tmpQuery = eventFactory.newQuery(tmpAcc.getId());
+                tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceEventAttributes.DEVICE_ID, tmpDev.getId(), AttributePredicate.Operator.EQUAL));
+                tmpQuery.setSortCriteria(tmpQuery.fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.ASCENDING));
+                tmpList = eventService.query(tmpQuery);
+
+                Assert.assertNotNull(tmpList);
+                stepData.put("DeviceEventList", tmpList);
+
+                assertTrue(tmpList.getSize() >= eventsNum);
+            }
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
     }
 }

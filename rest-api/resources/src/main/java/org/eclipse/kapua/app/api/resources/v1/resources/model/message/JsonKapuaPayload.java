@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.swagger.annotations.ApiModelProperty;
-
 @XmlRootElement(name = "payload")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class JsonKapuaPayload {
@@ -44,12 +42,12 @@ public class JsonKapuaPayload {
 
         setBody(payload.getBody());
 
-        payload.getMetrics().forEach((metricName, metricValue) -> {
-            XmlAdaptedMetric jsonMetric = new XmlAdaptedMetric();
+        payload.getMetrics().entrySet().stream().filter((metric) -> metric.getValue() != null).forEach((metric) -> {
 
-            jsonMetric.setName(metricName);
-            jsonMetric.setValueType(metricName.getClass());
-            jsonMetric.setValue(ObjectValueConverter.toString(metricValue));
+            XmlAdaptedMetric jsonMetric = new XmlAdaptedMetric();
+            jsonMetric.setName(metric.getKey());
+            jsonMetric.setValueType(metric.getValue().getClass());
+            jsonMetric.setValue(ObjectValueConverter.toString(metric.getValue()));
 
             getMetrics().add(jsonMetric);
         });
@@ -71,7 +69,6 @@ public class JsonKapuaPayload {
 
     @XmlElement(name = "body")
     @XmlJavaTypeAdapter(BinaryXmlAdapter.class)
-    @ApiModelProperty(dataType = "string")
     public byte[] getBody() {
         return body;
     }

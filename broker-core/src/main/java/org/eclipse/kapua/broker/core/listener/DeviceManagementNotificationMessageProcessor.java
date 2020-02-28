@@ -15,17 +15,16 @@ import com.codahale.metrics.Counter;
 import com.google.common.base.MoreObjects;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.UriEndpoint;
-
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.core.message.CamelKapuaMessage;
 import org.eclipse.kapua.commons.metric.MetricServiceFactory;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.device.management.job.manager.JobDeviceManagementOperationManagerService;
+import org.eclipse.kapua.service.device.management.message.notification.KapuaNotifyChannel;
 import org.eclipse.kapua.service.device.management.message.notification.KapuaNotifyMessage;
 import org.eclipse.kapua.service.device.management.message.notification.KapuaNotifyPayload;
 import org.eclipse.kapua.service.device.management.registry.manager.DeviceManagementRegistryManagerService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,9 @@ public class DeviceManagementNotificationMessageProcessor extends AbstractProces
     private static final DeviceManagementRegistryManagerService DEVICE_MANAGEMENT_REGISTRY_MANAGER_SERVICE = KapuaLocator.getInstance().getService(DeviceManagementRegistryManagerService.class);
     private static final JobDeviceManagementOperationManagerService JOB_DEVICE_MANAGEMENT_OPERATION_MANAGER_SERVICE = KapuaLocator.getInstance().getService(JobDeviceManagementOperationManagerService.class);
 
-    private static final String METRIC_COMPONENT_NAME = "deviceManagementRegistry";
+    private static final String METRIC_MODULE_NAME = "device_management_registry";
+    private static final String METRIC_COMPONENT_NAME = "notification";
+    private static final String METRIC_PROCESS_QUEUE = "process_queue";
 
     // queues counters
     private final Counter metricQueueCommunicationErrorCount;
@@ -53,9 +54,9 @@ public class DeviceManagementNotificationMessageProcessor extends AbstractProces
         super("Device Management Notify Processor");
         MetricsService metricService = MetricServiceFactory.getInstance();
 
-        metricQueueCommunicationErrorCount = metricService.getCounter(METRIC_COMPONENT_NAME, "deviceManagementNotification", "process", "queue", "communication", "error", "count");
-        metricQueueConfigurationErrorCount = metricService.getCounter(METRIC_COMPONENT_NAME, "deviceManagementNotification", "process", "queue", "configuration", "error", "count");
-        metricQueueGenericErrorCount = metricService.getCounter(METRIC_COMPONENT_NAME, "deviceManagementNotification", "process", "queue", "generic", "error", "count");
+        metricQueueCommunicationErrorCount = metricService.getCounter(METRIC_MODULE_NAME, METRIC_COMPONENT_NAME, METRIC_PROCESS_QUEUE, "communication", "error", "count");
+        metricQueueConfigurationErrorCount = metricService.getCounter(METRIC_MODULE_NAME, METRIC_COMPONENT_NAME, METRIC_PROCESS_QUEUE, "configuration", "error", "count");
+        metricQueueGenericErrorCount = metricService.getCounter(METRIC_MODULE_NAME, METRIC_COMPONENT_NAME, METRIC_PROCESS_QUEUE, "generic", "error", "count");
     }
 
     /**
@@ -69,21 +70,23 @@ public class DeviceManagementNotificationMessageProcessor extends AbstractProces
 
         KapuaNotifyMessage notifyMessage = (KapuaNotifyMessage) message.getMessage();
         KapuaNotifyPayload notifyPayload = notifyMessage.getPayload();
+        KapuaNotifyChannel notifyChannel = notifyMessage.getChannel();
 
         try {
             DEVICE_MANAGEMENT_REGISTRY_MANAGER_SERVICE.processOperationNotification(
                     notifyMessage.getScopeId(),
                     notifyPayload.getOperationId(),
                     MoreObjects.firstNonNull(notifyMessage.getSentOn(), notifyMessage.getReceivedOn()),
-                    notifyPayload.getResource(),
+                    notifyPayload.getResource() != null ? notifyPayload.getResource() : notifyChannel.getResources()[0],
                     notifyPayload.getStatus(),
-                    notifyPayload.getProgress());
+                    notifyPayload.getProgress(),
+                    notifyPayload.getMessage());
 
             JOB_DEVICE_MANAGEMENT_OPERATION_MANAGER_SERVICE.processJobTargetOnNotification(
                     notifyMessage.getScopeId(),
                     notifyPayload.getOperationId(),
                     MoreObjects.firstNonNull(notifyMessage.getSentOn(), notifyMessage.getReceivedOn()),
-                    notifyPayload.getResource(),
+                    notifyPayload.getResource() != null ? notifyPayload.getResource() : notifyChannel.getResources()[0],
                     notifyPayload.getStatus());
         } catch (Exception e) {
             LOG.error("Error while processing Device Management Operation Notification message!", e);

@@ -12,12 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 import org.eclipse.kapua.commons.service.internal.AbstractKapuaService;
 import org.eclipse.kapua.commons.service.internal.ServiceDAO;
 import org.eclipse.kapua.commons.util.ResourceUtils;
+import org.eclipse.kapua.commons.util.StringUtil;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
@@ -175,7 +178,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
      * @return
      * @throws KapuaException
      */
-    protected static Map<String, Object> toValues(KapuaTocd ocd, Properties props) throws KapuaException {
+    protected static Map<String, Object> toValues(@NotNull KapuaTocd ocd, Properties props) throws KapuaException {
         List<KapuaTad> ads = ocd.getAD();
         Map<String, Object> values = new HashMap<>();
         for (KapuaTad ad : ads) {
@@ -276,7 +279,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         }
 
         KapuaTocd ocd = getConfigMetadata(scopeId);
-        return toValues(ocd, properties);
+        return ocd == null ? null : toValues(ocd, properties);
     }
 
     @Override

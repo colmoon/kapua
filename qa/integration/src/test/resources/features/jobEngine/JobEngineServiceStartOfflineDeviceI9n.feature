@@ -9,7 +9,6 @@
 # Contributors:
 #     Eurotech - initial API and implementation
 ###############################################################################
-@jobEngineService
 @jobEngineStartOfflineDevice
 @integration
 
@@ -36,27 +35,15 @@
       be 0 and the status PROCESS_FAILED.
 
       Given I start the Kura Mock
-      When Device "is" connected
-      And I wait 1 seconds
+      When Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       When I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock device
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Command Execution"
@@ -67,10 +54,9 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
@@ -83,27 +69,15 @@
       be 0 and the status PROCESS_FAILED.
 
       Given I start the Kura Mock
-      When Device "is" connected
-      And I wait 1 seconds
+      When Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       When I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock device
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Asset Write"
@@ -114,10 +88,9 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
@@ -127,32 +100,20 @@
       Create a new job and set a disconnected KuraMock device as the job target.
       Add a new Bundle Start step to the created job. Start the job.
       After the executed job is finished, the executed target's step index should
-      be 0 and the status PROCESS_FAILED
+      be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
-      And Device "is" connected
-      And I wait 1 seconds
+      Given I start the Kura Mock
+      And Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Bundle Start"
@@ -163,19 +124,18 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
+      And Device is connected
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -183,32 +143,21 @@
       Create a new job and set a disconnected KuraMock device as the job target.
       Add a new Bundle Stop step to the created job. Start the job.
       After the executed job is finished, the executed target's step index should
-      be 0 and the status PROCESS_FAILED
+      be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
+      Given I start the Kura Mock
+      And Device is connected
+      And I wait 1 second
+      Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
-      When I start the Kura Mock
-      And Device "is" connected
-      And I wait 1 seconds
       And I get the KuraMock device
       And Bundles are requested
       And A bundle named org.eclipse.kura.linux.bluetooth with id 77 and version 1.0.300 is present and ACTIVE
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Bundle Stop"
@@ -219,19 +168,18 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
+      And Device is connected
       And Bundles are requested
       And A bundle named org.eclipse.kura.linux.bluetooth with id 77 and version 1.0.300 is present and ACTIVE
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -239,30 +187,18 @@
       Create a new job and set a disconnected KuraMock device as the job target.
       Add a new Configuration Put step to the created job. Start the job.
       After the executed job is finished, the executed target's step index should
-      be 0 and the status PROCESS_FAILED
+      be 0 and the status PROCESS_FAILED.
 
       Given I start the Kura Mock
-      When Device "is" connected
+      When Device is connected
       And I wait 1 seconds
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock device
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Configuration Put"
@@ -273,45 +209,31 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
-    Scenario: Starting a job with Package Install Command step
+    Scenario: Starting a job with Package Install step
       Create a new job and set a disconnected KuraMock device as the job target.
-      Add a new Package Install Command step to the created job. Start the job.
+      Add a new Package Install step to the created job. Start the job.
       After the executed job is finished, the executed target's step index should
-      be 0 and the status PROCESS_FAILED
+      be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
-      And Device "is" connected
-      And I wait 1 seconds
+      Given I start the Kura Mock
+      And Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
-      And Packages are requested
-      And Number of received packages is 1
+      And Packages are requested and 1 package is received
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Package Download / Install"
@@ -322,77 +244,59 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
-      And Packages are requested
-      Then Number of received packages is 1
+      And Device is connected
+      And Packages are requested and 1 package is received
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
-    Scenario: Starting a job with Package Uninstall Command step
+    Scenario: Starting a job with Package Uninstall step
       Create a new job and set a disconnected KuraMock device as the job target.
-      Add a new Package Uninstall Command step to the created job. Start the job.
+      Add a new Package Uninstall step to the created job. Start the job.
       After the executed job is finished, the executed target's step index should
-      be 0 and the status PROCESS_FAILED
+      be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      Then I start the Kura Mock
-      When Device "is" connected
-      And I wait 1 seconds
+      Given I start the Kura Mock
+      When Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
-      And Packages are requested
-      And Number of received packages is 1
-      And Package named org.eclipse.kura.example.ble.tisensortag with version 1.0.0 is received
+      And Packages are requested and 1 package is received
+      And Package named org.eclipse.kura.example.beacon with version 1.0.300 is received
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Package Uninstall"
       And A regular step creator with the name "TestStep" and the following properties
-        | name                     | type                                                                                               | value                                                                                                                                                                                                         |
-        | packageUninstallRequest  | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>org.eclipse.kura.example.ble.tisensortag</name><version>1.0.0</version><reboot>true</reboot><rebootDelay>10000</rebootDelay></uninstallRequest> |
-        | timeout                  | java.lang.Long                                                                                     | 10000                                                                                                                                                                                                         |
+        | name                     | type                                                                                               | value                                                                                                                                                                                                  |
+        | packageUninstallRequest  | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>org.eclipse.kura.example.beacon</name><version>1.0.300</version><reboot>true</reboot><rebootDelay>10000</rebootDelay></uninstallRequest> |
+        | timeout                  | java.lang.Long                                                                                     | 10000                                                                                                                                                                                                  |
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
-      And Packages are requested
-      Then Number of received packages is 1
+      And Device is connected
+      And Packages are requested and 1 package is received
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -406,30 +310,18 @@
     After the executed job is finished, the executed target's step index should
     be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
+      Given I start the Kura Mock
       And Device is connected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Command Execution"
@@ -446,10 +338,9 @@
       When I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
@@ -458,7 +349,7 @@
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -468,30 +359,18 @@
     After the executed job is finished, the executed target's step index should
     be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
+      Given I start the Kura Mock
       And Device is connected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Asset Write"
@@ -508,10 +387,9 @@
       When I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
@@ -519,7 +397,7 @@
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -527,33 +405,21 @@
     Create a new job and set a disconnected KuraMock device as the job target.
     Add two new Bundle Start steps to the created job. Start the job.
     After the executed job is finished, the executed target's step index should
-    be 0 and the status PROCESS_FAILED
+    be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
-      And Device "is" connected
-      And I wait 1 seconds
+      Given I start the Kura Mock
+      And Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       And A bundle named com.google.guava with id 95 and version 19.0.0 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Bundle Start"
@@ -570,20 +436,19 @@
       When I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
+      And Device is connected
       And Bundles are requested
       Then A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       And A bundle named com.google.guava with id 95 and version 19.0.0 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -591,32 +456,21 @@
     Create a new job and set a disconnected KuraMock device as the job target.
     Add a new Bundle Stop and Bundle Start steps to the created job. Start the job.
     After the executed job is finished, the executed target's step index should
-    be 0 and the status PROCESS_FAILED
+    be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
+      Given I start the Kura Mock
+      And Device is connected
+      And I wait 1 second
+      Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
-      When I start the Kura Mock
-      And Device "is" connected
-      And I wait 1 seconds
       And I get the KuraMock device
       And Bundles are requested
       And A bundle named org.eclipse.kura.linux.bluetooth with id 77 and version 1.0.300 is present and ACTIVE
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Bundle Stop"
@@ -633,20 +487,19 @@
       When I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
+      And Device is connected
       And Bundles are requested
       And A bundle named org.eclipse.kura.linux.bluetooth with id 77 and version 1.0.300 is present and ACTIVE
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -654,31 +507,20 @@
     Create a new job and set a disconnected KuraMock device as the job target.
     Add a new Configuration Put and Bundle Start steps to the created job. Start the job.
     After the executed job is finished, the executed target's step index should
-    be 0 and the status PROCESS_FAILED
+    be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
+      Given I start the Kura Mock
       And Device is connected
-      And I wait 1 seconds
+      And I wait 1 second
+      Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
       And Bundles are requested
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Configuration Put"
@@ -695,10 +537,9 @@
       And I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
@@ -707,7 +548,7 @@
       And Bundles are requested
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -715,34 +556,21 @@
     Create a new job and set a disconnected KuraMock device as the job target.
     Add a new Package Install and Bundle Start steps to the created job. Start the job.
     After the executed job is finished, the executed target's step index should
-    be 0 and the status PROCESS_FAILED
+    be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      When I start the Kura Mock
-      And Device "is" connected
-      And I wait 1 seconds
+      Given I start the Kura Mock
+      And Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
-      And Packages are requested
-      And Number of received packages is 1
+      And Packages are requested and 1 package is received
       And Bundles are requested
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Package Download / Install"
@@ -759,21 +587,19 @@
       When I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
-      And Packages are requested
-      Then Number of received packages is 1
+      And Device is connected
+      And Packages are requested and 1 package is received
       And Bundles are requested
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       And Device status is "DISCONNECTED"
       And I logout
 
@@ -781,42 +607,29 @@
     Create a new job and set a disconnected KuraMock device as the job target.
     Add a new Package Uninstall and Bundle Start steps to the created job. Start the job.
     After the executed job is finished, the executed target's step index should
-    be 0 and the status PROCESS_FAILED
+    be 0 and the status PROCESS_FAILED.
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      Then I start the Kura Mock
-      When Device "is" connected
-      And I wait 1 seconds
+      Given I start the Kura Mock
+      When Device is connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock device
-      And Packages are requested
-      And Number of received packages is 1
-      And Package named org.eclipse.kura.example.ble.tisensortag with version 1.0.0 is received
+      And Packages are requested and 1 package is received
+      And Package named org.eclipse.kura.example.beacon with version 1.0.300 is received
       And Bundles are requested
       And A bundle named slf4j.api with id 34 and version 1.7.21 is present and RESOLVED
       When KuraMock is disconnected
-      And I wait 1 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job target service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
-      And I configure the job step service
-        | type    | name                       | value |
-        | boolean | infiniteChildEntities      | true  |
-        | integer | maxNumberChildEntities     | 5     |
       Given I create a job with the name "TestJob"
       And A new job target item
       And Search for step definition with the name "Package Uninstall"
       And A regular step creator with the name "TestStep1" and the following properties
-        | name                     | type                                                                                               | value                                                                                                                                                                                                         |
-        | packageUninstallRequest  | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>org.eclipse.kura.example.ble.tisensortag</name><version>1.0.0</version><reboot>true</reboot><rebootDelay>10000</rebootDelay></uninstallRequest> |
-        | timeout                  | java.lang.Long                                                                                     | 10000                                                                                                                                                                                                         |
+        | name                     | type                                                                                               | value                                                                                                                                                                                                  |
+        | packageUninstallRequest  | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>org.eclipse.kura.example.beacon</name><version>1.0.300</version><reboot>true</reboot><rebootDelay>10000</rebootDelay></uninstallRequest> |
+        | timeout                  | java.lang.Long                                                                                     | 10000                                                                                                                                                                                                  |
       And I create a new step entity from the existing creator
       Then Search for step definition with the name "Bundle Start"
       And A regular step creator with the name "TestStep2" and the following properties
@@ -826,17 +639,15 @@
       When I create a new step entity from the existing creator
       And I search the database for created job steps and I find 2
       And I start a job
-      And I wait 5 seconds
-      Given I query for the job with the name "TestJob"
-      When I query for the execution items for the current job
-      Then I count 1
+      And I wait 2 seconds
+      Given I query for the job with the name "TestJob" and I find it
+      When I query for the execution items for the current job and I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       When I start the Kura Mock
-      And Device "is" connected
-      And Packages are requested
-      Then Number of received packages is 1
+      And Device is connected
+      And Packages are requested and 1 package is received
       And KuraMock is disconnected
       And I logout
 
@@ -851,26 +662,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -883,13 +683,12 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -900,26 +699,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -932,13 +720,12 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -948,30 +735,17 @@
     After the executed job is finished, the step index of executed targets should
     be 0 and the status PROCESS_FAILED
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      And I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      Given I add 2 devices to Kura Mock
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock devices
-      And Packages are requested
-      And Number of received packages is 1
+      And Packages are requested and 1 package is received
       When KuraMock is disconnected
-      And I wait 5 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -984,7 +758,7 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
@@ -992,7 +766,7 @@
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I add 2 devices to Kura Mock
-      And Devices "are" connected
+      And Devices are connected
       And Packages are requested
       Then Number of received packages is 1
       And KuraMock is disconnected
@@ -1005,45 +779,32 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
       Then I count 2
       And Search for step definition with the name "Package Uninstall"
       And A regular step creator with the name "TestStep" and the following properties
-        | name                    | type                                                                                               | value                                                                                                                                                                         |
-        | packageUninstallRequest | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>heater</name><version>1.0.300</version><reboot>true</reboot><rebootDelay>30000</rebootDelay></uninstallRequest> |
-        | timeout                 | java.lang.Long                                                                                     | 30000                                                                                                                                                                         |
+        | name                    | type                                                                                               | value                                                                                                                                                                                                  |
+        | packageUninstallRequest | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>org.eclipse.kura.example.beacon</name><version>1.0.300</version><reboot>true</reboot><rebootDelay>10000</rebootDelay></uninstallRequest> |
+        | timeout                 | java.lang.Long                                                                                     | 30000                                                                                                                                                                                                  |
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 15 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 15 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1054,26 +815,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1086,13 +836,12 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1103,26 +852,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1135,13 +873,12 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1152,26 +889,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1184,13 +910,12 @@
       When I create a new step entity from the existing creator
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1205,26 +930,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1244,13 +958,12 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1261,26 +974,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I wait 1 second
       When KuraMock is disconnected
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1300,13 +1002,12 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1316,30 +1017,17 @@
     After the executed job is finished, the step index of executed targets should
     be 0 and the status PROCESS_FAILED
 
-      Given I login as user with name "kapua-sys" and password "kapua-password"
-      And I select account "kapua-sys"
-      And I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      Given I add 2 devices to Kura Mock
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
+      And I login as user with name "kapua-sys" and password "kapua-password"
+      And I select account "kapua-sys"
       And I get the KuraMock devices
-      And Packages are requested
-      And Number of received packages is 1
+      And Packages are requested and 1 package is received
       When KuraMock is disconnected
-      And I wait 5 seconds
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1359,7 +1047,7 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 5 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
@@ -1367,7 +1055,7 @@
       And I search for the last job target in the database
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I add 2 devices to Kura Mock
-      And Device "are" connected
+      And Device are connected
       And Packages are requested
       Then Number of received packages is 1
       And Bundles are requested
@@ -1380,35 +1068,24 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
       Then I count 2
       And Search for step definition with the name "Package Uninstall"
       And A regular step creator with the name "TestStep" and the following properties
-        | name                    | type                                                                                               | value                                                                                                                                                                         |
-        | packageUninstallRequest | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>heater</name><version>1.0.300</version><reboot>true</reboot><rebootDelay>30000</rebootDelay></uninstallRequest> |
-        | timeout                 | java.lang.Long                                                                                     | 30000                                                                                                                                                                         |
+        | name                    | type                                                                                               | value                                                                                                                                                                                                  |
+        | packageUninstallRequest | org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest | <?xml version="1.0" encoding="UTF-8"?><uninstallRequest><name>org.eclipse.kura.example.beacon</name><version>1.0.300</version><reboot>true</reboot><rebootDelay>10000</rebootDelay></uninstallRequest> |
+        | timeout                 | java.lang.Long                                                                                     | 30000                                                                                                                                                                                                  |
       When I create a new step entity from the existing creator
       And Search for step definition with the name "Bundle Start"
       And A regular step creator with the name "TestStep1" and the following properties
@@ -1419,13 +1096,12 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 15 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 15 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1436,26 +1112,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1475,13 +1140,12 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1492,26 +1156,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1531,13 +1184,12 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 
@@ -1548,26 +1200,15 @@
     be 0 and the status PROCESS_FAILED
 
       Given I add 2 devices to Kura Mock
-      When Devices "are" connected
-      And I wait 5 seconds
+      When Devices are connected
+      And I wait 1 second
       Then Device status is "CONNECTED"
       When KuraMock is disconnected
+      And I wait 1 second
       Then Device status is "DISCONNECTED"
       And I login as user with name "kapua-sys" and password "kapua-password"
       And I select account "kapua-sys"
       And I get the KuraMock devices
-      And I configure the job service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job target service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
-      And I configure the job step service
-        | type    | name                   | value |
-        | boolean | infiniteChildEntities  | true  |
-        | integer | maxNumberChildEntities | 5     |
       Given I create a job with the name "TestJob"
       And I add targets to job
       When I count the targets in the current scope
@@ -1587,13 +1228,12 @@
       And I search the database for created job steps and I find 2
       Then No exception was thrown
       And I start a job
-      And I wait 3 seconds
+      And I wait 2 seconds
       Given I query for the job with the name "TestJob"
       When I query for the execution items for the current job
       Then I count 1
       And I confirm the executed job is finished
       And I search for the last job target in the database
-      And I wait 3 seconds
       And I confirm the step index is 0 and status is "PROCESS_FAILED"
       And I logout
 

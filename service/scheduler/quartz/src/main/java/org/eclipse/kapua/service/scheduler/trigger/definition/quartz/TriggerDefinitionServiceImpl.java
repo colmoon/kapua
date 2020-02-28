@@ -54,7 +54,7 @@ public class TriggerDefinitionServiceImpl extends AbstractKapuaService implement
         ArgumentValidator.notNull(creator, "stepDefinitionCreator");
         ArgumentValidator.notNull(creator.getScopeId(), "stepDefinitionCreator.scopeId");
         ArgumentValidator.notNull(creator.getTriggerType(), "stepDefinitionCreator.stepType");
-        ArgumentValidator.notEmptyOrNull(creator.getName(), "stepDefinitionCreator.name");
+        ArgumentValidator.validateEntityName(creator.getName(), "stepDefinitionCreator.name");
         ArgumentValidator.notEmptyOrNull(creator.getProcessorName(), "stepDefinitionCreator.processorName");
 
         //
@@ -73,7 +73,7 @@ public class TriggerDefinitionServiceImpl extends AbstractKapuaService implement
         ArgumentValidator.notNull(triggerDefinition, "stepDefinition");
         ArgumentValidator.notNull(triggerDefinition.getScopeId(), "stepDefinition.scopeId");
         ArgumentValidator.notNull(triggerDefinition.getTriggerType(), "triggerDefinition.stepType");
-        ArgumentValidator.notEmptyOrNull(triggerDefinition.getName(), "triggerDefinition.name");
+        ArgumentValidator.validateEntityName(triggerDefinition.getName(), "triggerDefinition.name");
         ArgumentValidator.notEmptyOrNull(triggerDefinition.getProcessorName(), "triggerDefinition.processorName");
 
         //
@@ -81,6 +81,21 @@ public class TriggerDefinitionServiceImpl extends AbstractKapuaService implement
         AUTHORIZATION_SERVICE.checkPermission(PERMISSION_FACTORY.newPermission(JobDomains.JOB_DOMAIN, Actions.write, null));
 
         return entityManagerSession.onTransactedResult(em -> TriggerDefinitionDAO.update(em, triggerDefinition));
+    }
+
+    @Override
+    public TriggerDefinition find(KapuaId stepDefinitionId) throws KapuaException {
+        //
+        // Argument Validation
+        ArgumentValidator.notNull(stepDefinitionId, "stepDefinitionId");
+
+        //
+        // Check Access
+        AUTHORIZATION_SERVICE.checkPermission(PERMISSION_FACTORY.newPermission(JobDomains.JOB_DOMAIN, Actions.read, KapuaId.ANY));
+
+        //
+        // Do find
+        return entityManagerSession.onResult(em -> TriggerDefinitionDAO.find(em, stepDefinitionId));
     }
 
     @Override
